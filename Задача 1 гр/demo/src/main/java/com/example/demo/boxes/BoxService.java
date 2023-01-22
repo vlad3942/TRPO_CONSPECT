@@ -42,6 +42,69 @@ public class BoxService {
         return Arrays.stream(heights).max().orElseThrow(() -> new RuntimeException("Error"));
     }
 
+    public List<Box> findMaxHeightPyramid() {
+        List<Box> boxes = repo.getSorted();
+        int[] heights = new int[boxes.size()];
+
+        for(int i = boxes.size() - 1; i >= 0; i--) {
+            Box box = boxes.get(i);
+            int count = 0;
+            for (int j = i + 1; j < boxes.size(); j++) {
+                Box currentBox = boxes.get(j);
+                if (box.getX() >= currentBox.getX() && box.getY() >= currentBox.getY() && heights[j] > count) {
+                    count = heights[j];
+                }
+            }
+            heights[i] = count + 1;
+        }
+        List<Box> result = new ArrayList<>();
+
+        int[] arr = Arrays.copyOf(heights, heights.length);
+        int index = findIndexByValueFromBottom(heights, findMax(arr));
+        result.add(boxes.get(index));
+        while(arr.length > 0) {
+            arr = Arrays.copyOfRange(heights, index + 1, heights.length);
+            index = findIndexByValueFromBottom(heights, findMax(arr));
+            if (index >= 0) {
+                result.add(boxes.get(index));
+            }
+        }
+        return revers(result);
+
+    }
+
+    private int findIndexByValueFromBottom(int arr[], int val) {
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] == val) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    private int findMax(int[] arr) {
+        if (arr == null || arr.length == 0) {
+            return -1;
+        }
+        int max = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+        return max;
+    }
+
+    private List<Box> revers(List<Box> list) {
+        List<Box> res = new ArrayList<>();
+        for (int i = list.size() - 1; i >= 0; i--) {
+            res.add(list.get(i));
+        }
+        return res;
+    }
+
+
     /**
      * Не работает короче =)
      * @return фигню
