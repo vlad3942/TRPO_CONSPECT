@@ -11,6 +11,42 @@ import java.util.*;
 public class BoxService {
     private final BoxRepo repo;
 
+    public int maxHeight() {
+        List<Box> boxes = repo.getSorted();
+
+        int[] heights = new int[boxes.size()];
+
+        for (int i = boxes.size() - 1; i >= 0; i--) {
+            int count = 0;
+            Box box = boxes.get(i);
+            for (int j = i + 1; j < heights.length; j++) {
+                Box another = boxes.get(j);
+                if (box.getX() >= another.getX() && box.getY() >= another.getY() && heights[j] > count) {
+                    count = heights[j];
+                }
+            }
+            heights[i] = count + 1;
+        }
+
+        /*List<Box> list = List.of(
+                new Box(46, 15),    //heights = 3
+                new Box(21, 47),    //heights = 5
+                new Box(17, 32),    //heights = 4
+                new Box(15, 12),    //heights = 2
+                new Box(14, 14),    //heights = 2
+                new Box(12, 31),    //heights = 3
+                new Box(12, 31)     //heights = 2
+                new Box(5, 7),      //heights = 1
+        );*/
+
+        return Arrays.stream(heights).max().orElseThrow(() -> new RuntimeException("Error"));
+    }
+
+    /**
+     * Не работает короче =)
+     * @return фигню
+     */
+    @Deprecated
     public int countHeight() {
         List<Box> list = repo.findAll();
         /*List<Box> list = List.of(
@@ -59,26 +95,6 @@ public class BoxService {
         return sum;
     }
 
-    public int maxHeight() {
-        List<Box> boxes = repo.getSorted();
-
-        int[] heights = new int[boxes.size()];
-
-        for (int i = boxes.size() - 1; i >= 0; i--) {
-            int count = 0;
-            Box box = boxes.get(i);
-            for (int j = i + 1; j < heights.length; j++) {
-                Box another = boxes.get(j);
-                if (box.getX() >= another.getX() && box.getY() >= another.getY() && heights[j] > count) {
-                    count = heights[j];
-                }
-            }
-            heights[i] = count + 1;
-        }
-
-        return Arrays.stream(heights).max().orElseThrow(() -> new RuntimeException("Error"));
-    }
-
     @PostConstruct
     private void logs() {
         List<Box> list = List.of(
@@ -92,8 +108,8 @@ public class BoxService {
                 new Box(12, 31)
         );
         repo.saveAll(list);
-        System.out.println("-------------------->" + countHeight() + "<---------------------");
-        System.out.println("-------------------->" + maxHeight() + "<---------------------");
+        //ystem.out.println("-------------------->" + countHeight() + "<---------------------");
+        //System.out.println("-------------------->" + maxHeight() + "<---------------------");
 
     }
 
