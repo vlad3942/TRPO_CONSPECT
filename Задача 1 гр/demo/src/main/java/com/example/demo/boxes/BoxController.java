@@ -23,4 +23,9 @@ public class BoxController {
     public List<Box> maxPyramid() {
         return boxService.findMaxHeightPyramid();
     }
+
+    @GetMapping("/max-pyramid-opt")
+    public List<Box> maxPyramidOpt() {
+        return boxService.findMaxHeightPyramidOpt();
+    }
 }

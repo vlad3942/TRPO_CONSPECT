@@ -42,6 +42,31 @@ public class BoxService {
         return Arrays.stream(heights).max().orElseThrow(() -> new RuntimeException("Error"));
     }
 
+    public List<Box> findMaxHeightPyramidOpt() {
+        List<Box> boxes = repo.getSorted();
+        int[] heights = new int[boxes.size()];
+
+        List<Box> result = new ArrayList<>();
+        int current = 0;
+
+        for(int i = boxes.size() - 1; i >= 0; i--) {
+            Box box = boxes.get(i);
+            int count = 0;
+            for (int j = i + 1; j < boxes.size(); j++) {
+                Box currentBox = boxes.get(j);
+                if (box.getX() >= currentBox.getX() && box.getY() >= currentBox.getY() && heights[j] > count) {
+                    count = heights[j];
+                }
+            }
+            heights[i] = count + 1;
+            if (heights[i] > current) {
+                current = heights[i];
+                result.add(box);
+            }
+        }
+        return result;
+    }
+
     public List<Box> findMaxHeightPyramid() {
         List<Box> boxes = repo.getSorted();
         int[] heights = new int[boxes.size()];
@@ -70,7 +95,6 @@ public class BoxService {
             }
         }
         return revers(result);
-
     }
 
     private int findIndexByValueFromBottom(int arr[], int val) {
